@@ -7,13 +7,13 @@ const COLUMNS = 20;
 
 
 
-class Gamed extends React.Component { 
+class Game extends React.Component { 
     constructor(props) {
         super(props);
 
         this.state = {
             isGameRunning: false,
-            cells: [],
+            board: this.makeNewBoard(),
             
         }
         this.handleStartClick = this.handleStartClick.bind(this);
@@ -35,7 +35,7 @@ class Gamed extends React.Component {
 
     // methods for the board
     makeNewBoard() {
-        let board = "";
+        let board = [];
 
         for (let i = 0; i < ROWS; i++) {
             board[i] = [];
@@ -61,30 +61,70 @@ class Gamed extends React.Component {
     }
 
     // clicking on the board
-    handleClick = () => {
-    //     const elemOffset = this.getElementOffset();
-    //     const offsetX = event.clientX - elemOffset.x;
-    //     const offsetY = event.clientY - elemOffset.y;
-        
-    //     const x = Math.floor(offsetX / COLUMNS);
-    //     const y = Math.floor(offsetY / ROWS);
+    handleClick = (cellId) => {
+        this.setState(
+        {
+            board: this.state.board.map(row =>
+            row.map(
+                cell =>
+                cell.id === cellId ? { ...cell, alive: !cell.alive } : cell
+            )
+            )
+        });
+    }
 
-    //     if (x >= 0 && x <= this.cols && y >= 0 && y <= this.rows) {
-    //         this.board[y][x] = !this.board[y][x];
-    //     }
+    generateCells(x, y, board) {
+        var newcells = [];
+        for (let i = x - 1; i < x + 2; i++) {
+        for (let j = y - 1; j < y + 2; j++) {
+            if (
+            i >= 0 &&
+            j >= 0 &&
+            (i < board.length && j < board.length) &&
+            (i !== x || j !== y)
+            ) {
+            newcells.push({ x: i, y: j });
+            }
+        }
+        }
+        return newcells;
+    }
 
-    //     this.setState({ 
-    //         cells: this.makeCells() });
-    // }
+    neighborsAlive(x, y, board) {
+        let neighborsCounter = 0;
+        this.generateCells(x, y, board).map(neighbor => {
+        board[neighbor.x][neighbor.y].alive && neighborsCounter++;
+        });
+        return neighborsCounter;
+    }
 
-    // getElementOffset() {
-    //     const rect = this.boardRef.getBoundingClientRect();
-    //     const doc = document.documentElement;
+    isAlive() {
+        var boardCopy = this.state.board.map(row => {
+            return row.map(cell => {
+                return { ...cell };
+            });
+        });
 
-    //     return {
-    //         x: (rect.left + window.pageXOffset) - doc.clientLeft,
-    //         y: (rect.top + window.pageYOffset) - doc.clientTop,
-    //     };
+        let row = [];
+        let neighbors = 0;
+        let anyAlive = false;
+
+        for (let i = 0; i < this.state.board.length; i++) {
+            row = boardCopy[i];
+            for (let j = 0; j < row.length; j++) {
+                neighbors = this.neighborsAlive(i, j, this.state.board);
+                if (boardCopy[i][j].alive === true) {
+                }
+                if (neighbors < 2 || neighbors > 3) {
+                    boardCopy[i][j].alive = false;
+                } else if (neighbors === 3) {
+                    boardCopy[i][j].alive = true;
+                }
+                if (anyAlive !== true && boardCopy[i][j].alive === true) {
+                    anyAlive = true;
+                }
+            }
+        }
     }
 
     inSelected = () => {
@@ -130,4 +170,4 @@ class Gamed extends React.Component {
     }
 }
 
-export default Gamed;
+export default Game;
