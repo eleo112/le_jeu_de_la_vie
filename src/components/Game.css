@@ -1,0 +1,31 @@
+h1 {
+  color: blue;
+}
+
+.board {
+  position: relative;
+  padding: 10px;
+  margin: 0 auto;
+  border: 1px solid black;
+  background-color: lightgray;
+  background-image: linear-gradient(#000000 1px, transparent 1px),
+    linear-gradient(90deg, #000000 1px, transparent 1px);
+}
+
+.board:hover {
+  background: #00ccff;
+}
+
+.dead {
+  background-color: lightgray;
+}
+
+.alive {
+  background-color: green;
+}
+
+.grid {
+  margin: auto;
+  margin-top: 15px;
+  width: 150px;
+}
